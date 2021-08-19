@@ -3,10 +3,9 @@
 var Promise = TrelloPowerUp.Promise;
 
 var BLACK_ROCKET_ICON = 'https://cdn.glitch.com/1b42d7fe-bda8-4af8-a6c8-eff0cea9e08a%2Frocket-ship.png?1494946700421';
-const POWERUP_NAME = 'KW Capacity'
+const POWERUP_NAME = 'Sprint Capacity'
 const SPRINT_TOTAL_HOURS = 50
 const WORKING_HOURS_IN_DAYS = 6
-const SPRINT_END = new Date('8/9/2021')
 
 // Expects start date to be before end date
 // start and end are Date objects
@@ -76,11 +75,15 @@ TrelloPowerUp.initialize({
       text: POWERUP_NAME,
       callback: async (t) => {
         const cards = await t.cards('name', 'members')
+        let SPRINT_END = null
         const allocations = []
         const projectAllocations = []
         let unallocatedTime = 0
         let totalTaskTimeLeft = 0
         cards.forEach(card => {
+            if (card.name.toLowerCase().includes('sprint end')) {
+              SPRINT_END = new Date(card.name.replace('sprint end', ''))
+            }
             const workedTime = timeFromName(card.name, /\((.*?)\)/g, ['(', ')'])
             const projectName = strFromRegex(card.name, /\{(.*?)\}/g, ['{', '}'])
             const estimatedTimeLeft = timeFromName(card.name, /\[(.*?)\]/g, ['[', ']'])
